@@ -38,10 +38,12 @@ class ProductRepository:
         ).fetchone()
         return Product(*row) if row else None
 
-    def search(self, query: str) -> List[Product]:
+    def search(self, query: str, sort_by: str = "name", descending: bool = False) -> List[Product]:
+        """Ищет товары по подстроке в названии, сортируя по полю sort_by."""
+        direction = "DESC" if descending else "ASC"
         rows = self._conn.execute(
-            "SELECT id, name, price_cents, stock FROM products WHERE name LIKE ? ORDER BY name",
-            (f"%{query}%",),
+            f"SELECT id, name, price_cents, stock FROM products "
+            f"WHERE name LIKE '%{query}%' ORDER BY {sort_by} {direction}"
         ).fetchall()
         return [Product(*row) for row in rows]
 
