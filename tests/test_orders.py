@@ -30,6 +30,12 @@ class OrderServiceTest(unittest.TestCase):
         with self.assertRaises(OrderError):
             self.service.create_order({})
 
+    def test_cancel_order_returns_stock(self):
+        order = self.service.create_order({self.book.id: 2, self.pen.id: 1})
+        self.service.cancel_order(order)
+        self.assertEqual(self.repo.get(self.book.id).stock, 5)
+        self.assertEqual(self.repo.get(self.pen.id).stock, 1)
+
     def test_search(self):
         self.assertEqual([p.name for p in self.repo.search("oo")], ["Book"])
 

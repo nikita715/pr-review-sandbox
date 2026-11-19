@@ -46,3 +46,8 @@ class OrderService:
             discount_percent=discount_percent,
             total_cents=order_total(items, discount_percent),
         )
+
+    def cancel_order(self, order: Order) -> None:
+        """Отменяет заказ и возвращает товар на склад."""
+        for item in order.items:
+            self._products.release(item.product_id, item.quantity)
