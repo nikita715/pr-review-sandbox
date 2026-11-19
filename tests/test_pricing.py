@@ -1,7 +1,7 @@
 import unittest
 
 from shop.models import OrderItem
-from shop.pricing import add_tax, apply_discount, order_total, subtotal
+from shop.pricing import add_tax, apply_discount, order_total, shipping_cost, subtotal
 
 
 class PricingTest(unittest.TestCase):
@@ -22,6 +22,10 @@ class PricingTest(unittest.TestCase):
     def test_tax_rounds_up(self):
         self.assertEqual(add_tax(1000), 1200)
         self.assertEqual(add_tax(1), 2)
+
+    def test_shipping_cost(self):
+        self.assertEqual(shipping_cost(1000), 500)
+        self.assertEqual(shipping_cost(7500), 0)
 
     def test_order_total(self):
         items = [OrderItem(1, 1, 1000)]
