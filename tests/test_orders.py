@@ -33,6 +33,13 @@ class OrderServiceTest(unittest.TestCase):
     def test_search(self):
         self.assertEqual([p.name for p in self.repo.search("oo")], ["Book"])
 
+    def test_list_in_stock(self):
+        self.repo.add("Album", 2000, 0)
+        self.assertEqual([p.name for p in self.repo.list_in_stock()], ["Book", "Pen"])
+
+        self.service.create_order({self.pen.id: 1})
+        self.assertEqual([p.name for p in self.repo.list_in_stock()], ["Book"])
+
 
 if __name__ == "__main__":
     unittest.main()
