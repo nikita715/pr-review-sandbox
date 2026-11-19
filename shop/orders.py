@@ -2,7 +2,7 @@ import itertools
 from typing import Dict
 
 from shop.models import Order, OrderItem
-from shop.pricing import order_total
+from shop.pricing import apply_discount, order_total, subtotal, tax_amount
 from shop.repository import ProductRepository
 
 
@@ -44,5 +44,6 @@ class OrderService:
             id=next(self._ids),
             items=items,
             discount_percent=discount_percent,
+            tax_cents=tax_amount(apply_discount(subtotal(items), discount_percent)),
             total_cents=order_total(items, discount_percent),
         )
