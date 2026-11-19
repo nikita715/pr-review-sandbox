@@ -22,6 +22,11 @@ class OrderServiceTest(unittest.TestCase):
             self.service.create_order({self.book.id: 1, self.pen.id: 2})
         self.assertEqual(self.repo.get(self.book.id).stock, 5)
 
+    def test_create_order_by_names(self):
+        order = self.service.create_order_by_names({"Book": 2, "Pen": 1})
+        self.assertEqual(order.total_cents, 2580)
+        self.assertEqual(self.repo.get(self.book.id).stock, 3)
+
     def test_unknown_product(self):
         with self.assertRaises(OrderError):
             self.service.create_order({999: 1})
