@@ -23,22 +23,24 @@ class OrderService:
         if not quantities:
             raise OrderError("order is empty")
 
-        conn = self._products._conn
+        # Сначала проверяем все позиции, чтобы не трогать БД для заведомо невалидного заказа
+        products = {}
+        for product_id, quantity in quantities.items():
+            if quantity <= 0:
+                raise OrderError(f"invalid quantity for product {product_id}")
+            product = self._products.get(product_id)
+            if product is None:
+                raise OrderError(f"product {product_id} not found")
+            if product.stock < quantity:
+                raise OrderError(f"not enough stock for product {product_id}")
+            products[product_id] = product
+
         items = []
-        try:
-            for product_id, quantity in quantities.items():
-                if quantity <= 0:
-                    raise OrderError(f"invalid quantity for product {product_id}")
-                product = self._products.get(product_id)
-                if product is None:
-                    raise OrderError(f"product {product_id} not found")
-                if not self._products.reserve(product_id, quantity):
-                    raise OrderError(f"not enough stock for product {product_id}")
-                items.append(OrderItem(product_id, quantity, product.price_cents))
-        except Exception:
-            conn.rollback()
-            raise
-        conn.commit()
+        for product_id, quantity in quantities.items():
+            if not self._products.reserve(product_id, quantity):
+                raise OrderError(f"not enough stock for product {product_id}")
+            items.append(OrderItem(product_id, quantity, products[product_id].price_cents))
+        self._products._conn.commit()
 
         return Order(
             id=next(self._ids),

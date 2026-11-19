@@ -22,6 +22,11 @@ class OrderServiceTest(unittest.TestCase):
             self.service.create_order({self.book.id: 1, self.pen.id: 2})
         self.assertEqual(self.repo.get(self.book.id).stock, 5)
 
+    def test_invalid_quantity_reserves_nothing(self):
+        with self.assertRaises(OrderError):
+            self.service.create_order({self.book.id: 1, self.pen.id: 0})
+        self.assertEqual(self.repo.get(self.book.id).stock, 5)
+
     def test_unknown_product(self):
         with self.assertRaises(OrderError):
             self.service.create_order({999: 1})
