@@ -1,7 +1,7 @@
 import unittest
 
 from shop.models import OrderItem
-from shop.pricing import add_tax, apply_discount, order_total, subtotal
+from shop.pricing import add_tax, apply_discount, format_cents, order_total, subtotal
 
 
 class PricingTest(unittest.TestCase):
@@ -26,6 +26,17 @@ class PricingTest(unittest.TestCase):
     def test_order_total(self):
         items = [OrderItem(1, 1, 1000)]
         self.assertEqual(order_total(items, 10), 1080)
+
+
+    def test_format_cents(self):
+        self.assertEqual(format_cents(0), "0.00")
+        self.assertEqual(format_cents(5), "0.05")
+        self.assertEqual(format_cents(1200), "12.00")
+        self.assertEqual(format_cents(123456), "1234.56")
+
+    def test_format_negative_rejected(self):
+        with self.assertRaises(ValueError):
+            format_cents(-1)
 
 
 if __name__ == "__main__":

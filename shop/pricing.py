@@ -27,3 +27,10 @@ def add_tax(amount_cents: int) -> int:
 def order_total(items: Iterable[OrderItem], discount_percent: int = 0) -> int:
     """Итог заказа: сумма позиций, затем скидка, затем налог."""
     return add_tax(apply_discount(subtotal(items), discount_percent))
+
+
+def format_cents(amount_cents: int) -> str:
+    """Форматирует сумму в центах для показа пользователю: 123456 -> "1234.56"."""
+    if amount_cents < 0:
+        raise ValueError("amount must be non-negative")
+    return f"{amount_cents // 100}.{amount_cents % 100:02d}"
