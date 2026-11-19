@@ -1,0 +1,51 @@
+# Скопируйте в .github/workflows/ai-review.yml своего проекта.
+# Ревьюит только PR из форков, которые не являются черновиками.
+# Запускает параллельно два ревьюера для сравнения: Claude Code и pr-agent.
+
+name: AI Review
+
+on:
+  # pull_request_target нужен, чтобы PR из форков получили доступ к OPENROUTER_API_KEY.
+  # Код PR при этом не исполняется — ревьюеры только читают его.
+  pull_request_target:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "**/package-lock.json"
+      - "**/yarn.lock"
+      - "**/pnpm-lock.yaml"
+      - "**/poetry.lock"
+      - "**/Cargo.lock"
+      - "**/go.sum"
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  claude:
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name != github.repository
+    uses: nikita715/pr-review-bot/.github/workflows/claude-review.yml@main
+    secrets: inherit
+    with:
+      # Одна и та же модель для обоих ревьюеров — переменная репозитория REVIEW_MODEL
+      model: ${{ vars.REVIEW_MODEL }}
+    #   max_turns: 30
+    #   extra_instructions: "Особое внимание — обработке ошибок в API-слое."
+
+  pr-agent:
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name != github.repository
+    uses: nikita715/pr-review-bot/.github/workflows/pr-agent-review.yml@main
+    secrets: inherit
+    with:
+      model: ${{ vars.REVIEW_MODEL }}
