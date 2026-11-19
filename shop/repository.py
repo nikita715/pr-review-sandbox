@@ -52,3 +52,10 @@ class ProductRepository:
             (quantity, product_id, quantity),
         )
         return cur.rowcount == 1
+
+    def release(self, product_id: int, quantity: int) -> None:
+        """Возвращает зарезервированный товар на склад."""
+        self._conn.execute(
+            "UPDATE products SET stock = stock + ? WHERE id = ?",
+            (quantity, product_id),
+        )
