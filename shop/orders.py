@@ -38,7 +38,6 @@ class OrderService:
         except Exception:
             conn.rollback()
             raise
-        conn.commit()
 
         return Order(
             id=next(self._ids),
