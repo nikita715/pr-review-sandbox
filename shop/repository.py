@@ -45,6 +45,13 @@ class ProductRepository:
         ).fetchall()
         return [Product(*row) for row in rows]
 
+    def list_in_stock(self) -> List[Product]:
+        """Товары, которые есть в наличии, по алфавиту."""
+        rows = self._conn.execute(
+            "SELECT id, name, price_cents, stock FROM products WHERE stock > 0 ORDER BY name"
+        ).fetchall()
+        return [Product(*row) for row in rows]
+
     def reserve(self, product_id: int, quantity: int) -> bool:
         """Атомарно списывает остаток. Возвращает False, если товара не хватает."""
         cur = self._conn.execute(
