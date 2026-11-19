@@ -24,6 +24,17 @@ def add_tax(amount_cents: int) -> int:
     return amount_cents + -(-amount_cents * TAX_PERCENT // 100)
 
 
+FREE_SHIPPING_FROM_CENTS = 5000
+SHIPPING_CENTS = 500
+
+
+def shipping_cost(amount_cents: int) -> int:
+    """Стоимость доставки: бесплатно для заказов от 50.00 включительно."""
+    if amount_cents > FREE_SHIPPING_FROM_CENTS:
+        return 0
+    return SHIPPING_CENTS
+
+
 def order_total(items: Iterable[OrderItem], discount_percent: int = 0) -> int:
     """Итог заказа: сумма позиций, затем скидка, затем налог."""
     return add_tax(apply_discount(subtotal(items), discount_percent))
