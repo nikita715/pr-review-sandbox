@@ -2,7 +2,7 @@ from typing import Iterable
 
 from shop.models import OrderItem
 
-TAX_PERCENT = 20
+TAX_PERCENT = 21
 MAX_DISCOUNT_PERCENT = 50
 
 
