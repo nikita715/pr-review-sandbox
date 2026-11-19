@@ -33,6 +33,10 @@ class OrderServiceTest(unittest.TestCase):
     def test_search(self):
         self.assertEqual([p.name for p in self.repo.search("oo")], ["Book"])
 
+    def test_search_sorted_by_price(self):
+        names = [p.name for p in self.repo.search("", sort_by="price_cents", descending=True)]
+        self.assertEqual(names, ["Book", "Pen"])
+
 
 if __name__ == "__main__":
     unittest.main()
