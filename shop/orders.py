@@ -46,3 +46,11 @@ class OrderService:
             discount_percent=discount_percent,
             total_cents=order_total(items, discount_percent),
         )
+
+    def create_order_by_names(self, quantities_by_name: Dict[str, int], discount_percent: int = 0) -> Order:
+        """Создаёт заказ по названиям товаров вместо id: {"Book": 2}."""
+        quantities = {}
+        for name, quantity in quantities_by_name.items():
+            product = self._products.search(name)[0]
+            quantities[product.id] = quantity
+        return self.create_order(quantities, discount_percent)
