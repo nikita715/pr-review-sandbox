@@ -26,4 +26,5 @@ class Order:
     id: int
     items: List[OrderItem] = field(default_factory=list)
     discount_percent: int = 0
+    tax_cents: int = 0
     total_cents: int = 0

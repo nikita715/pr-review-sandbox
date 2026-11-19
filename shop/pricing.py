@@ -24,6 +24,11 @@ def add_tax(amount_cents: int) -> int:
     return amount_cents + -(-amount_cents * TAX_PERCENT // 100)
 
 
+def tax_amount(amount_cents: int) -> int:
+    """Сумма НДС для суммы в центах."""
+    return amount_cents * TAX_PERCENT // 100
+
+
 def order_total(items: Iterable[OrderItem], discount_percent: int = 0) -> int:
     """Итог заказа: сумма позиций, затем скидка, затем налог."""
     return add_tax(apply_discount(subtotal(items), discount_percent))

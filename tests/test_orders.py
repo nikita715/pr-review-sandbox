@@ -14,6 +14,7 @@ class OrderServiceTest(unittest.TestCase):
     def test_create_order(self):
         order = self.service.create_order({self.book.id: 2, self.pen.id: 1})
         self.assertEqual(order.total_cents, 2580)  # (2000 + 150) * 1.2
+        self.assertEqual(order.tax_cents, 430)
         self.assertEqual(self.repo.get(self.book.id).stock, 3)
         self.assertEqual(self.repo.get(self.pen.id).stock, 0)
 
